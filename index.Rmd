@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Objectives
 
-We want to allocate resource to zones while minimising the cost (e.g. travel time, travel distance, expenditure, etc.) for the entire system.
+We want to allocate resources to zones while minimising the total cost (e.g. travel time, travel distance, expenditure, etc.) for the entire system.
 
 ## Allocation Costs
 
@@ -28,9 +28,9 @@ colnames(my_costs) <- sprintf("Z_%s", seq.int(from = 1,length.out = J))
 my_costs
 ```
 
-This system has \(I=`r I`\) resources and \(J=`r J`\) zones, so that the resources are denoted as \(\{R_1, R_2, R_3...R_I\}\) while the zones are denoted as \(\{Z_1, Z_2, Z_3...Z_I\}\).
+This system has \(I=`r I`\) resources and \(J=`r J`\) zones, so that the resources are denoted as \(\{R_1, R_2, R_3...R_I\}\) while the zones are denoted as \(\{Z_1, Z_2, Z_3...Z_J\}\).
 
-A \(I \times J\) matrix denoted as \(c\) represents the allocation cost for each resource to each zone. \(c_{i,j}\) represents the cost of assigning resource \(R_i\) to zone \(Z_j\). 
+A \(I \times J\) matrix denoted as \(c\) represents the allocation cost for each resource to each zone. The value \(c_{i,j}\) represents the cost of assigning resource \(R_i\) to zone \(Z_j\). 
 
 In this example, in order to assign resource \(R_2\) to zone \(Z_3\), a cost of \(c_{2,3}=`r round(my_costs[2,3],3)`\) is incurred.
 
@@ -44,13 +44,17 @@ knitr::include_graphics("map.png")
 s <- c(2, 1, 3, 2, 1)
 ```
 
-A integer vector \(s\) of length \(I\) will specify the minimum number of resources required for each zone. In this example, \(s_1=`r s[1]`\)  means that zone \(Z_1\) requires at least `r s[1]` resources.
+A integer vector \(s\) of length \(J\) will specify the minimum number of resources required for each zone. In this example, \(s_1=`r s[1]`\)  means that zone \(Z_1\) requires at least `r s[1]` resources.
 
 ## Problem Formulation
 
 The Integer Programming (IP) problem is formulated as below. 
 
-Allocation matrix \(x\) is made up of binary values, which indicate whether resource \(R_i\) is allocated to zone \(Z_j\) when \(x_{ij}=1\). The constrains also specify that the resource can only be allocated to exactly \(1\) zone, and the total number of resources allocated to zone \(Z_j\) must equal to or exceeding the threshold value indicated by \(s_j\). The objective function is a function which minimises the total cost \(z\) of the system.
+The symbol \(x\) denotes allocation matrix of size \(I \times J\), which is made up of binary values. When \(x_{ij}=1\), it indicates resource \(R_i\) is allocated to zone \(Z_j\). 
+
+The constrains also specify that any resources can only be allocated to exactly \(1\) zone, and the total number of resources allocated to zone \(Z_j\) must equal to or exceeding the threshold value indicated by \(s_j\).
+
+The objective function is a function which minimises the total cost \(z\) of the system.
 
 \[
 \begin{aligned}
@@ -64,7 +68,7 @@ Allocation matrix \(x\) is made up of binary values, which indicate whether reso
 \\
 \begin{aligned}
   & \text{Minimise} & z & = \sum_{i=1}^{I}\sum_{j=1}^{J}x_{ij}c_{ij} \\
-  & \text{s.t.} & x_{ij} & \in \{{0,1\}} & \forall &i &=1,2,3,...,I \\
+  & \text{Subject to} & x_{ij} & \in \{{0,1\}} & \forall &i &=1,2,3,...,I \\
   &&&&& j &=1,2,3,...,J \\
   & & \sum_{j=1}^{J}x_{ij} & = 1 & \forall &i &=1,2,3,...,I \\
   & & \sum_{i=1}^{I}x_{ij} & \geq s_{j} & \forall &j &=1,2,3,...,J
@@ -73,7 +77,7 @@ Allocation matrix \(x\) is made up of binary values, which indicate whether reso
 
 ## Problem Solving
 
-To solve the IP problem, load the following packages in R.
+To solve the IP problem, load the following packages in `R`. We will solve this problem using the simplex algorithm.
 
 ```{r, message=FALSE, warning=FALSE}
 library(dplyr)
@@ -83,7 +87,7 @@ library(ompr)
 library(ompr.roi)
 ```
 
-The IP problem is expressed in R in the following code chunk. The computation time is usually significantly longer in a practical problem.
+The IP problem is expressed in `R` in the following code chunk. The computation time is usually significantly longer in a complex, real-world problem.
 
 ```{r}
 
@@ -97,14 +101,14 @@ model <- MILPModel() %>%
   add_constraint(sum_expr(x[i, j], i = 1:I) >= s[j], j = 1:J) %>%
   set_objective(sum_expr(x[i, j] * colwise(cost_func(i,j)), i = 1:I, j = 1:J), sense = "min")
 
-my_results <-  model %>% 
+my_solution <-  model %>% 
   solve_model(with_ROI("glpk", verbose = TRUE))
 ```
 
 Extracting the variable \(x_{i,j}\) will return the near-optimal allocation results.
 
 ```{r}
-my_allocation_results <- my_results %>%
+my_allocation_results <- my_solution %>%
   get_solution(x[i,j]) %>% 
   as_tibble() %>%
   filter(value == 1) %>%
@@ -112,4 +116,17 @@ my_allocation_results <- my_results %>%
   arrange(i)
 
 my_allocation_results
+```
+
+## Verifying the Solution
+
+We can count the number of resources allocated to each zone, which is indicated in column `n` below. Compare that with the target threshold column `s`.
+
+```{r}
+my_allocation_results %>%
+  group_by(j) %>%
+  count() %>%
+  ungroup() %>%
+  arrange(j) %>%
+  bind_cols(s = s)
 ```

@@ -371,7 +371,7 @@ summary {
 
 <div id="objectives" class="section level2">
 <h2>Objectives</h2>
-<p>We want to allocate resource to zones while minimising the cost (e.g. travel time, travel distance, expenditure, etc.) for the entire system.</p>
+<p>We want to allocate resources to zones while minimising the total cost (e.g. travel time, travel distance, expenditure, etc.) for the entire system.</p>
 </div>
 <div id="allocation-costs" class="section level2">
 <h2>Allocation Costs</h2>
@@ -383,20 +383,20 @@ rownames(my_costs) &lt;- sprintf(&quot;R_%s&quot;, seq.int(from = 1,length.out =
 colnames(my_costs) &lt;- sprintf(&quot;Z_%s&quot;, seq.int(from = 1,length.out = J))
 
 my_costs</code></pre>
-<pre><code>##             Z_1        Z_2       Z_3        Z_4        Z_5
-## R_1  0.32302767 0.84262566 0.3690946 0.99667664 0.61223998
-## R_2  0.10525673 0.20785749 0.3505566 0.83495410 0.11629871
-## R_3  0.32139317 0.43207449 0.8972671 0.85060170 0.64063949
-## R_4  0.10223237 0.03539910 0.4505188 0.92533213 0.83025851
-## R_5  0.51137177 0.18395149 0.5996616 0.45704534 0.81894577
-## R_6  0.58812867 0.92108997 0.9871199 0.87056431 0.32035480
-## R_7  0.04034678 0.02687408 0.6294786 0.53745960 0.02759415
-## R_8  0.59982120 0.19180920 0.6038233 0.39513146 0.64152367
-## R_9  0.77328733 0.20744155 0.7808599 0.41917093 0.97859376
-## R_10 0.98265584 0.87264502 0.7972300 0.01289942 0.22993057</code></pre>
-<p>This system has <span class="math inline">\(I=10\)</span> resources and <span class="math inline">\(J=5\)</span> zones, so that the resources are denoted as <span class="math inline">\(\{R_1, R_2, R_3...R_I\}\)</span> while the zones are denoted as <span class="math inline">\(\{Z_1, Z_2, Z_3...Z_I\}\)</span>.</p>
-<p>A <span class="math inline">\(I \times J\)</span> matrix denoted as <span class="math inline">\(c\)</span> represents the allocation cost for each resource to each zone. <span class="math inline">\(c_{i,j}\)</span> represents the cost of assigning resource <span class="math inline">\(R_i\)</span> to zone <span class="math inline">\(Z_j\)</span>.</p>
-<p>In this example, in order to assign resource <span class="math inline">\(R_2\)</span> to zone <span class="math inline">\(Z_3\)</span>, a cost of <span class="math inline">\(c_{2,3}=0.351\)</span> is incurred.</p>
+<pre><code>##            Z_1       Z_2       Z_3       Z_4        Z_5
+## R_1  0.6899801 0.9828699 0.5954642 0.5322483 0.98633175
+## R_2  0.5458916 0.5004549 0.4499492 0.7091812 0.85298808
+## R_3  0.1969981 0.3321666 0.0949833 0.5110397 0.25113695
+## R_4  0.2593241 0.5327590 0.2969356 0.6092668 0.50051046
+## R_5  0.1848888 0.7778995 0.5308007 0.9897970 0.21185209
+## R_6  0.5534844 0.5474975 0.7606637 0.2389037 0.06468748
+## R_7  0.3020117 0.2670992 0.7114561 0.6677129 0.98081783
+## R_8  0.3488080 0.6475702 0.9313423 0.6727181 0.87516378
+## R_9  0.3755132 0.8917543 0.7865334 0.4892989 0.22019250
+## R_10 0.6152782 0.2126277 0.7199132 0.2350669 0.22855228</code></pre>
+<p>This system has <span class="math inline">\(I=10\)</span> resources and <span class="math inline">\(J=5\)</span> zones, so that the resources are denoted as <span class="math inline">\(\{R_1, R_2, R_3...R_I\}\)</span> while the zones are denoted as <span class="math inline">\(\{Z_1, Z_2, Z_3...Z_J\}\)</span>.</p>
+<p>A <span class="math inline">\(I \times J\)</span> matrix denoted as <span class="math inline">\(c\)</span> represents the allocation cost for each resource to each zone. The value <span class="math inline">\(c_{i,j}\)</span> represents the cost of assigning resource <span class="math inline">\(R_i\)</span> to zone <span class="math inline">\(Z_j\)</span>.</p>
+<p>In this example, in order to assign resource <span class="math inline">\(R_2\)</span> to zone <span class="math inline">\(Z_3\)</span>, a cost of <span class="math inline">\(c_{2,3}=0.45\)</span> is incurred.</p>
 </div>
 <div id="minimum-capacity" class="section level2">
 <h2>Minimum Capacity</h2>
@@ -407,12 +407,14 @@ Map showing layout of the zones
 </p>
 </div>
 <pre class="r"><code>s &lt;- c(2, 1, 3, 2, 1)</code></pre>
-<p>A integer vector <span class="math inline">\(s\)</span> of length <span class="math inline">\(I\)</span> will specify the minimum number of resources required for each zone. In this example, <span class="math inline">\(s_1=2\)</span> means that zone <span class="math inline">\(Z_1\)</span> requires at least 2 resources.</p>
+<p>A integer vector <span class="math inline">\(s\)</span> of length <span class="math inline">\(J\)</span> will specify the minimum number of resources required for each zone. In this example, <span class="math inline">\(s_1=2\)</span> means that zone <span class="math inline">\(Z_1\)</span> requires at least 2 resources.</p>
 </div>
 <div id="problem-formulation" class="section level2">
 <h2>Problem Formulation</h2>
 <p>The Integer Programming (IP) problem is formulated as below.</p>
-<p>Allocation matrix <span class="math inline">\(x\)</span> is made up of binary values, which indicate whether resource <span class="math inline">\(R_i\)</span> is allocated to zone <span class="math inline">\(Z_j\)</span> when <span class="math inline">\(x_{ij}=1\)</span>. The constrains also specify that the resource can only be allocated to exactly <span class="math inline">\(1\)</span> zone, and the total number of resources allocated to zone <span class="math inline">\(Z_j\)</span> must equal to or exceeding the threshold value indicated by <span class="math inline">\(s_j\)</span>. The objective function is a function which minimises the total cost <span class="math inline">\(z\)</span> of the system.</p>
+<p>The symbol <span class="math inline">\(x\)</span> denotes allocation matrix of size <span class="math inline">\(I \times J\)</span>, which is made up of binary values. When <span class="math inline">\(x_{ij}=1\)</span>, it indicates resource <span class="math inline">\(R_i\)</span> is allocated to zone <span class="math inline">\(Z_j\)</span>.</p>
+<p>The constrains also specify that any resources can only be allocated to exactly <span class="math inline">\(1\)</span> zone, and the total number of resources allocated to zone <span class="math inline">\(Z_j\)</span> must equal to or exceeding the threshold value indicated by <span class="math inline">\(s_j\)</span>.</p>
+<p>The objective function is a function which minimises the total cost <span class="math inline">\(z\)</span> of the system.</p>
 <p><span class="math display">\[
 \begin{aligned}
 &amp; \text{Let} &amp; I &amp; = \text{No. of resources} \\
@@ -425,7 +427,7 @@ Map showing layout of the zones
 \\
 \begin{aligned}
   &amp; \text{Minimise} &amp; z &amp; = \sum_{i=1}^{I}\sum_{j=1}^{J}x_{ij}c_{ij} \\
-  &amp; \text{s.t.} &amp; x_{ij} &amp; \in \{{0,1\}} &amp; \forall &amp;i &amp;=1,2,3,...,I \\
+  &amp; \text{Subject to} &amp; x_{ij} &amp; \in \{{0,1\}} &amp; \forall &amp;i &amp;=1,2,3,...,I \\
   &amp;&amp;&amp;&amp;&amp; j &amp;=1,2,3,...,J \\
   &amp; &amp; \sum_{j=1}^{J}x_{ij} &amp; = 1 &amp; \forall &amp;i &amp;=1,2,3,...,I \\
   &amp; &amp; \sum_{i=1}^{I}x_{ij} &amp; \geq s_{j} &amp; \forall &amp;j &amp;=1,2,3,...,J
@@ -434,13 +436,13 @@ Map showing layout of the zones
 </div>
 <div id="problem-solving" class="section level2">
 <h2>Problem Solving</h2>
-<p>To solve the IP problem, load the following packages in R.</p>
+<p>To solve the IP problem, load the following packages in <code>R</code>. We will solve this problem using the simplex algorithm.</p>
 <pre class="r"><code>library(dplyr)
 library(ROI)
 library(ROI.plugin.glpk)
 library(ompr)
 library(ompr.roi)</code></pre>
-<p>The IP problem is expressed in R in the following code chunk. The computation time is usually significantly longer in a practical problem.</p>
+<p>The IP problem is expressed in <code>R</code> in the following code chunk. The computation time is usually significantly longer in a complex, real-world problem.</p>
 <pre class="r"><code>cost_func &lt;- function(i,j){
   vapply(seq_along(i), function(k) my_costs[i[k], j[k]], numeric(1L))
 }
@@ -451,26 +453,26 @@ model &lt;- MILPModel() %&gt;%
   add_constraint(sum_expr(x[i, j], i = 1:I) &gt;= s[j], j = 1:J) %&gt;%
   set_objective(sum_expr(x[i, j] * colwise(cost_func(i,j)), i = 1:I, j = 1:J), sense = &quot;min&quot;)
 
-my_results &lt;-  model %&gt;% 
+my_solution &lt;-  model %&gt;% 
   solve_model(with_ROI(&quot;glpk&quot;, verbose = TRUE))</code></pre>
 <pre><code>## &lt;SOLVER MSG&gt;  ----
 ## GLPK Simplex Optimizer, v4.47
 ## 15 rows, 50 columns, 100 non-zeros
 ##       0: obj =  0.000000000e+000  infeas = 1.900e+001 (10)
-## *    24: obj =  4.821743451e+000  infeas = 0.000e+000 (1)
-## *    46: obj =  2.651688700e+000  infeas = 0.000e+000 (1)
+## *    24: obj =  4.952128723e+000  infeas = 0.000e+000 (1)
+## *    49: obj =  2.694859253e+000  infeas = 0.000e+000 (0)
 ## OPTIMAL SOLUTION FOUND
 ## GLPK Integer Optimizer, v4.47
 ## 15 rows, 50 columns, 100 non-zeros
 ## 50 integer variables, all of which are binary
 ## Integer optimization begins...
-## +    46: mip =     not found yet &gt;=              -inf        (1; 0)
-## +    46: &gt;&gt;&gt;&gt;&gt;  2.651688700e+000 &gt;=  2.651688700e+000   0.0% (1; 0)
-## +    46: mip =  2.651688700e+000 &gt;=     tree is empty   0.0% (0; 1)
+## +    49: mip =     not found yet &gt;=              -inf        (1; 0)
+## +    49: &gt;&gt;&gt;&gt;&gt;  2.694859253e+000 &gt;=  2.694859253e+000   0.0% (1; 0)
+## +    49: mip =  2.694859253e+000 &gt;=     tree is empty   0.0% (0; 1)
 ## INTEGER OPTIMAL SOLUTION FOUND
 ## &lt;!SOLVER MSG&gt; ----</code></pre>
 <p>Extracting the variable <span class="math inline">\(x_{i,j}\)</span> will return the near-optimal allocation results.</p>
-<pre class="r"><code>my_allocation_results &lt;- my_results %&gt;%
+<pre class="r"><code>my_allocation_results &lt;- my_solution %&gt;%
   get_solution(x[i,j]) %&gt;% 
   as_tibble() %&gt;%
   filter(value == 1) %&gt;%
@@ -481,16 +483,34 @@ my_allocation_results</code></pre>
 <pre><code>## # A tibble: 10 x 2
 ##        i     j
 ##    &lt;int&gt; &lt;int&gt;
-##  1     1     3
+##  1     1     4
 ##  2     2     3
-##  3     3     1
+##  3     3     3
 ##  4     4     3
-##  5     5     2
+##  5     5     1
 ##  6     6     5
-##  7     7     1
-##  8     8     4
-##  9     9     2
+##  7     7     2
+##  8     8     1
+##  9     9     5
 ## 10    10     4</code></pre>
+</div>
+<div id="verifying-the-solution" class="section level2">
+<h2>Verifying the Solution</h2>
+<p>We can count the number of resources allocated to each zone, which is indicated in column <code>n</code> below. Compare that with the target threshold column <code>s</code>.</p>
+<pre class="r"><code>my_allocation_results %&gt;%
+  group_by(j) %&gt;%
+  count() %&gt;%
+  ungroup() %&gt;%
+  arrange(j) %&gt;%
+  bind_cols(s = s)</code></pre>
+<pre><code>## # A tibble: 5 x 3
+##       j     n     s
+##   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+## 1     1     2     2
+## 2     2     1     1
+## 3     3     3     3
+## 4     4     2     2
+## 5     5     2     1</code></pre>
 </div>
 
 
