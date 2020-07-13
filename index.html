@@ -383,20 +383,20 @@ rownames(my_costs) &lt;- sprintf(&quot;R_%s&quot;, seq.int(from = 1,length.out =
 colnames(my_costs) &lt;- sprintf(&quot;Z_%s&quot;, seq.int(from = 1,length.out = J))
 
 my_costs</code></pre>
-<pre><code>##             Z_1        Z_2       Z_3        Z_4       Z_5
-## R_1  0.79911259 0.05518387 0.0698244 0.05483663 0.7922892
-## R_2  0.04184486 0.97480768 0.9037595 0.31376464 0.2376693
-## R_3  0.05556903 0.36563361 0.2601715 0.08917562 0.7026910
-## R_4  0.61305032 0.11691723 0.2099624 0.54987034 0.4922029
-## R_5  0.09117380 0.77653146 0.3409924 0.29019064 0.1848103
-## R_6  0.09617003 0.35649015 0.6472486 0.55633200 0.2614247
-## R_7  0.75586210 0.09243851 0.7557406 0.57623748 0.8536661
-## R_8  0.07036898 0.65132997 0.8471224 0.50641625 0.6028377
-## R_9  0.61430852 0.58059262 0.7246060 0.21383043 0.5981865
-## R_10 0.56880523 0.57389377 0.8511394 0.37749987 0.5429656</code></pre>
+<pre><code>##            Z_1        Z_2       Z_3        Z_4        Z_5
+## R_1  0.1008973 0.18965181 0.2679822 0.05020737 0.23210702
+## R_2  0.8158252 0.20660130 0.5838734 0.28645700 0.37490112
+## R_3  0.2598165 0.94146640 0.5528437 0.13998447 0.53556063
+## R_4  0.5227342 0.19576579 0.9071467 0.90202676 0.52600436
+## R_5  0.2174148 0.37999724 0.2996356 0.70261029 0.70000418
+## R_6  0.4190413 0.43804643 0.1678135 0.28593751 0.89372880
+## R_7  0.3785230 0.14643696 0.8078490 0.82879443 0.02805453
+## R_8  0.3344097 0.43973773 0.9614191 0.46210509 0.73191859
+## R_9  0.7074303 0.07134122 0.2626254 0.10201009 0.67070333
+## R_10 0.1379078 0.43179565 0.4608907 0.44731600 0.61689725</code></pre>
 <p>This system has <span class="math inline">\(I=10\)</span> resources and <span class="math inline">\(J=5\)</span> zones, so that the resources are denoted as <span class="math inline">\(\{R_1, R_2, R_3...R_I\}\)</span> while the zones are denoted as <span class="math inline">\(\{Z_1, Z_2, Z_3...Z_J\}\)</span>.</p>
 <p>A <span class="math inline">\(I \times J\)</span> matrix denoted as <span class="math inline">\(c\)</span> represents the allocation cost for each resource to each zone. The value <span class="math inline">\(c_{i,j}\)</span> represents the cost of assigning resource <span class="math inline">\(R_i\)</span> to zone <span class="math inline">\(Z_j\)</span>.</p>
-<p>In this example, in order to assign resource <span class="math inline">\(R_2\)</span> to zone <span class="math inline">\(Z_3\)</span>, a cost of <span class="math inline">\(c_{2,3}=0.904\)</span> is incurred.</p>
+<p>In this example, in order to assign resource <span class="math inline">\(R_2\)</span> to zone <span class="math inline">\(Z_3\)</span>, a cost of <span class="math inline">\(c_{2,3}=0.584\)</span> is incurred.</p>
 </div>
 <div id="minimum-capacity" class="section level2">
 <h2>Minimum Capacity</h2>
@@ -459,16 +459,16 @@ my_solution &lt;-  model %&gt;%
 ## GLPK Simplex Optimizer, v4.47
 ## 15 rows, 50 columns, 100 non-zeros
 ##       0: obj =  0.000000000e+000  infeas = 1.900e+001 (10)
-## *    24: obj =  4.463134465e+000  infeas = 0.000e+000 (1)
-## *    48: obj =  1.616921319e+000  infeas = 0.000e+000 (0)
+## *    24: obj =  5.641703539e+000  infeas = 0.000e+000 (1)
+## *    47: obj =  1.823005397e+000  infeas = 0.000e+000 (0)
 ## OPTIMAL SOLUTION FOUND
 ## GLPK Integer Optimizer, v4.47
 ## 15 rows, 50 columns, 100 non-zeros
 ## 50 integer variables, all of which are binary
 ## Integer optimization begins...
-## +    48: mip =     not found yet &gt;=              -inf        (1; 0)
-## +    48: &gt;&gt;&gt;&gt;&gt;  1.616921319e+000 &gt;=  1.616921319e+000   0.0% (1; 0)
-## +    48: mip =  1.616921319e+000 &gt;=     tree is empty   0.0% (0; 1)
+## +    47: mip =     not found yet &gt;=              -inf        (1; 0)
+## +    47: &gt;&gt;&gt;&gt;&gt;  1.823005397e+000 &gt;=  1.823005397e+000   0.0% (1; 0)
+## +    47: mip =  1.823005397e+000 &gt;=     tree is empty   0.0% (0; 1)
 ## INTEGER OPTIMAL SOLUTION FOUND
 ## &lt;!SOLVER MSG&gt; ----</code></pre>
 <p>Extracting the variable <span class="math inline">\(x_{i,j}\)</span> will return the optimal allocation results.</p>
@@ -483,16 +483,16 @@ my_allocation_results</code></pre>
 <pre><code>## # A tibble: 10 x 2
 ##        i     j
 ##    &lt;int&gt; &lt;int&gt;
-##  1     1     3
-##  2     2     1
-##  3     3     3
-##  4     4     3
-##  5     5     5
-##  6     6     1
-##  7     7     2
+##  1     1     4
+##  2     2     2
+##  3     3     4
+##  4     4     2
+##  5     5     3
+##  6     6     3
+##  7     7     5
 ##  8     8     1
-##  9     9     4
-## 10    10     4</code></pre>
+##  9     9     3
+## 10    10     1</code></pre>
 </div>
 <div id="verifying-the-solution" class="section level2">
 <h2>Verifying the Solution</h2>
@@ -506,8 +506,8 @@ my_allocation_results</code></pre>
 <pre><code>## # A tibble: 5 x 3
 ##       j     n     s
 ##   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
-## 1     1     3     2
-## 2     2     1     1
+## 1     1     2     2
+## 2     2     2     1
 ## 3     3     3     3
 ## 4     4     2     2
 ## 5     5     1     1</code></pre>
