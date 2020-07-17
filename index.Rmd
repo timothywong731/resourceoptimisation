@@ -36,7 +36,7 @@ In this example, in order to assign resource \(R_2\) to zone \(Z_3\), a cost of 
 
 ## Minimum Capacity
 
-```{r pressure, echo=FALSE, fig.cap="Map showing layout of the zones", out.width = '50%'}
+```{r pressure, echo=FALSE, fig.cap="Map showing layout of the zones", out.width = '80%'}
 knitr::include_graphics("map.png")
 ```
 
